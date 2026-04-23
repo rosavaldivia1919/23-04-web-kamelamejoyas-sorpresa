@@ -116,104 +116,36 @@ const HomePage = () => {
     setCurrentPerfumeIndex(prev => (prev - 1 + featuredPerfumes.length) % featuredPerfumes.length);
   };
 
-  // Featured mini-perfumes section - 29 products REORGANIZED BY COLOR
-  // Order: Light tones → Warm light tones → Warm dark tones → Dark tones
+  // Featured mini-perfumes section - 27 products from local folder
   const featuredPerfumes = [
-  // 1. LIGHT TONES (rosados, perlados, blancos)
-  {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/d9445463042474e7ba43cc360d927067.jpg',
-    alt: 'Mini-perfume Chance Chanel Eau Tendre con botella redonda rosa perlada'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/0005486cbede51495283a2024243a192.jpg',
-    alt: 'Mini-perfume My Way Giorgio Armani con botella rosa perlada'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/1a4da0c6f8c54729b964f7f9e435d106.jpg',
-    alt: 'Mini-perfume Miss Dior Blooming Bouquet con botella cuadrada y moño negro'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/b69329fed8dab061eb4d5bfe254f0b18.jpg',
-    alt: 'Mini-perfume con botella rectangular rosa coral y tapón plateado'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/d56c4a8484234fc57bd0dd412a37ae84.jpg',
-    alt: 'Mini-perfume TOM FORD SOLEIL NEIGE con botella gris lavanda'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/52bc6e60b0e488426b22a04ffbcfa4aa.jpg',
-    alt: 'Mini-perfume con botella cuadrada de cristal y tapón plateado'
-  },
-  // 2. WARM LIGHT TONES (dorados, amarillos, beige)
-  {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/73cd72a447dc0cc099dad01d725a35eb.jpg',
-    alt: 'Mini-perfume Coco Mademoiselle Chanel con botella cuadrada dorada'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/9c0809510e5a6f17a9c52787a64b1514.jpg',
-    alt: 'Mini-perfume Dior J\'adore con botella dorada en forma de gota'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/e030ea6795068a0fb2c29ed1355c9e55.jpg',
-    alt: 'Mini-perfume con botella redonda dorada pequeña'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/38ec6767a02eee75ef5dba70f38e415e.jpg',
-    alt: 'Mini-perfume con botella cuadrada dorada y tapón plateado'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/5a7d633e9d74d8a6792d671932777d90.jpg',
-    alt: 'Mini-perfume La Petite Robe Noire con botella dorada y silueta negra'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/1a183755b4d39a6d564db60c30c6bcf9.jpg',
-    alt: 'Mini-perfume dorado con etiqueta marrón LANCÔME'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/f2075f7065467d35aa2865e06d296c53.jpg',
-    alt: 'Mini-perfume con botella cuadrada dorada y tapón cristal'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/b3167d18873a5900185de708e4e063fa.jpg',
-    alt: 'Mini-perfume con botella cuadrada dorada y moño marrón'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/76e54e651ab2b8568cbf909fc8a35026.jpg',
-    alt: 'Mini-perfume Giorgio Armani Si con botella rectangular dorada y tapón beige'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/011c2b876bb56282a01ea9d0afd62543.jpg',
-    alt: 'Mini-perfume Giorgio Armani Si con botella rectangular dorada perlada y tapón negro'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/d4e6113df3910c07297a7cad4ccd3624.jpg',
-    alt: 'Mini-perfume Tom Ford Tubéreuse Nue con botella cuadrada beige crema'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/49273ddce85456b540098d182ac37951.jpg',
-    alt: 'Mini-perfume amarillo con moño dorado'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/dcdeb20a717ba55cb92a7a9f0ef167dd.jpg',
-    alt: 'Mini-perfume Jo Malone Orange Blossom Cologne con botella rectangular amarilla dorada'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/d5852d76de8c35c64b6bb3246de0b586.jpg',
-    alt: 'Mini-perfume Burberry Brit Sheer con botella dorada con patrón geométrico y tapón negro'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/e815c0704f3d3e7933fe44a5aa82a5d6.jpg',
-    alt: 'Mini-perfume NOMADE con tapón dorado y botella transparente'
-  },
-  // 3. WARM DARK TONES (ámbar, naranjas, verdes)
-  {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/3168f685eccafc0b5b02836fb1021dda.jpg',
-    alt: 'Mini-perfume Twilly d\'Hermès con botella naranja ámbar'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/998541ecc74dfd2e95bb4c0171b31c0e.jpg',
-    alt: 'Mini-perfume Giorgio Armani Si Passione con botella rectangular roja coral y tapón negro'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/f01936ed0f5c5a62f8be44ec8ac841c3.jpg',
-    alt: 'Mini-perfume con botella ovalada verde oliva'
-  },
-  // 4. DARK TONES (negros, rojos oscuros)
-  {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/883d161d1ba717192bf32c981de343ec.jpg',
-    alt: 'Mini-perfume BULGARI con botella redonda roja'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/b17dcb4303b2fc1faea03875dc435753.jpg',
-    alt: 'Mini-perfume Dior 9 con botella redonda negra y brillante'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/de2d21b1723e6dc6c3940c21b7c4cf5c.jpg',
-    alt: 'Mini-perfume Valentino Donna Born in Roma con botella negra con patrón geométrico'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/19815eef042ffe99e19ca3e190b704b5.jpg',
-    alt: 'Mini-perfume Valentino Donna Born in Roma con botella negra con patrón geométrico versión 2'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/85449e94b4716ad2a1ad616a27d339b8.jpg',
-    alt: 'Mini-perfume Tom Ford White Suede con botella negra cuadrada y etiqueta dorada'
-  }];
+    { url: '/miniperfumes/IMG_2184-Photoroom.JPG', alt: 'Mini-perfume 1' },
+    { url: '/miniperfumes/IMG_2194-Photoroom.JPG', alt: 'Mini-perfume 2' },
+    { url: '/miniperfumes/IMG_2208-Photoroom.JPG', alt: 'Mini-perfume 3' },
+    { url: '/miniperfumes/IMG_2227-Photoroom.JPG', alt: 'Mini-perfume 4' },
+    { url: '/miniperfumes/IMG_2236-Photoroom.JPG', alt: 'Mini-perfume 5' },
+    { url: '/miniperfumes/IMG_2247-Photoroom.JPG', alt: 'Mini-perfume 6' },
+    { url: '/miniperfumes/IMG_2251-Photoroom.JPG', alt: 'Mini-perfume 7' },
+    { url: '/miniperfumes/IMG_2267-Photoroom.JPG', alt: 'Mini-perfume 8' },
+    { url: '/miniperfumes/IMG_2278-Photoroom.JPG', alt: 'Mini-perfume 9' },
+    { url: '/miniperfumes/IMG_2287-Photoroom.JPG', alt: 'Mini-perfume 10' },
+    { url: '/miniperfumes/IMG_2300-Photoroom.JPG', alt: 'Mini-perfume 11' },
+    { url: '/miniperfumes/IMG_2339-Photoroom.JPG', alt: 'Mini-perfume 12' },
+    { url: '/miniperfumes/IMG_2351-Photoroom.JPG', alt: 'Mini-perfume 13' },
+    { url: '/miniperfumes/IMG_2374-Photoroom.JPG', alt: 'Mini-perfume 14' },
+    { url: '/miniperfumes/IMG_2408-Photoroom.JPG', alt: 'Mini-perfume 15' },
+    { url: '/miniperfumes/IMG_2410-Photoroom.JPG', alt: 'Mini-perfume 16' },
+    { url: '/miniperfumes/IMG_2413-Photoroom.JPG', alt: 'Mini-perfume 17' },
+    { url: '/miniperfumes/IMG_2414-Photoroom.JPG', alt: 'Mini-perfume 18' },
+    { url: '/miniperfumes/IMG_2420-Photoroom.JPG', alt: 'Mini-perfume 19' },
+    { url: '/miniperfumes/IMG_2431-Photoroom.JPG', alt: 'Mini-perfume 20' },
+    { url: '/miniperfumes/IMG_2441-Photoroom.JPG', alt: 'Mini-perfume 21' },
+    { url: '/miniperfumes/IMG_2448-Photoroom.JPG', alt: 'Mini-perfume 22' },
+    { url: '/miniperfumes/IMG_2455-Photoroom.JPG', alt: 'Mini-perfume 23' },
+    { url: '/miniperfumes/IMG_2467-Photoroom.JPG', alt: 'Mini-perfume 24' },
+    { url: '/miniperfumes/Photoroom_20260421_181038.JPEG', alt: 'Mini-perfume 25' },
+    { url: '/miniperfumes/Photoroom_20260421_183900.JPG', alt: 'Mini-perfume 26' },
+    { url: '/miniperfumes/Photoroom_20260421_185155.jpeg', alt: 'Mini-perfume 27' }
+  ];
 
   // Jewelry catalog - UPDATED: Removed positions 4 and 6, moved position 2 to position 1, added 9 new images
   const catalogJewelry = [{
