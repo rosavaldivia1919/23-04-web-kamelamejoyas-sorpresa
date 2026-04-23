@@ -1,0 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "DM Sans", sans-serif;
+  overflow-x: clip;
+}
+
+@layer base {
+  :root {
+    --background: 32 48% 98%;
+    --foreground: 30 20% 20%;
+    --card: 0 0% 100%;
+    --card-foreground: 30 20% 20%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 30 20% 20%;
+    --primary: 32 48% 90%;
+    --primary-foreground: 30 40% 25%;
+    --secondary: 10 29% 87%;
+    --secondary-foreground: 10 40% 25%;
+    --muted: 32 30% 95%;
+    --muted-foreground: 30 20% 40%;
+    --accent: 10 29% 87%;
+    --accent-foreground: 10 40% 25%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 32 25% 88%;
+    --input: 32 25% 88%;
+    --ring: 32 48% 75%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 30 20% 10%;
+    --foreground: 32 48% 95%;
+    --card: 30 15% 15%;
+    --card-foreground: 32 48% 95%;
+    --popover: 30 15% 15%;
+    --popover-foreground: 32 48% 95%;
+    --primary: 32 48% 85%;
+    --primary-foreground: 30 40% 15%;
+    --secondary: 10 29% 82%;
+    --secondary-foreground: 10 40% 15%;
+    --muted: 30 20% 20%;
+    --muted-foreground: 32 30% 60%;
+    --accent: 10 29% 82%;
+    --accent-foreground: 10 40% 15%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 30 20% 25%;
+    --input: 30 20% 25%;
+    --ring: 32 48% 70%;
+  }
+
+  :root {
+    --sidebar-background: 32 48% 98%;
+    --sidebar-foreground: 30 20% 26%;
+    --sidebar-primary: 30 40% 25%;
+    --sidebar-primary-foreground: 32 48% 98%;
+    --sidebar-accent: 32 30% 95%;
+    --sidebar-accent-foreground: 30 40% 25%;
+    --sidebar-border: 32 25% 88%;
+    --sidebar-ring: 32 48% 75%;
+  }
+
+  .dark {
+    --sidebar-background: 30 20% 10%;
+    --sidebar-foreground: 32 48% 95%;
+    --sidebar-primary: 32 48% 85%;
+    --sidebar-primary-foreground: 30 40% 15%;
+    --sidebar-accent: 30 20% 20%;
+    --sidebar-accent-foreground: 32 48% 95%;
+    --sidebar-border: 30 20% 25%;
+    --sidebar-ring: 32 48% 70%;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .font-serif {
+    font-family: "Playfair Display", serif;
+  }
+}
+
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
+}
+
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+[data-sparkle] {
+  animation: sparkle 2.5s ease-in-out infinite;
+}
+
+[data-twinkle] {
+  animation: twinkle 1.8s ease-in-out infinite;
+}
+
+[data-shimmer] {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s linear infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.sparkle-text {
+  position: relative;
+  display: inline-block;
+}
+
+.sparkle-text::before,
+.sparkle-text::after {
+  content: '✨';
+  position: absolute;
+  font-size: 0.6em;
+  animation: twinkle 2s ease-in-out infinite;
+}
+
+.sparkle-text::before {
+  top: -0.5em;
+  left: -0.8em;
+  animation-delay: 0s;
+}
+
+.sparkle-text::after {
+  bottom: -0.3em;
+  right: -0.8em;
+  animation-delay: 1s;
+}
