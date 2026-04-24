@@ -147,16 +147,10 @@ const HomePage = () => {
     { url: '/miniperfumes/Photoroom_20260421_185155.jpeg', alt: 'Mini-perfume 27' }
   ];
 
-  // Jewelry catalog - UPDATED: Removed positions 4 and 6, moved position 2 to position 1, added 9 new images
+  // Jewelry catalog - Updated per user request
   const catalogJewelry = [{
     url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/71444b4748a2b466be1fda2e4b5ce093.jpg',
     alt: 'Pendientes de resina epoxi con forma de mariposa translúcida'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/2d9e4066784b0ad55b1f72d4b2e98c79.jpg',
-    alt: 'Pendientes de resina con forma orgánica en tonos rosa y blanco'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/2a9ba28badc6cb70c850d6b3d8b881fb.jpg',
-    alt: 'Pendientes de resina con forma de abanico en tonos rosa y turquesa'
   }, {
     url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/101bb48d2f36fb70673555e30292b1dd.jpg',
     alt: 'Pendientes de resina epoxi turquesa con destellos brillantes'
@@ -176,20 +170,11 @@ const HomePage = () => {
     url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/d2f319828782b97a3b82b3bedaee31a1.jpg',
     alt: 'Pendientes de resina con forma de gota en tonos dorado y multicolor'
   }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/f98e0ee847e76afbc94dc6e962a380c4.jpg',
-    alt: 'Pendientes de resina con forma de gota en tonos verde menta y beige'
+    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/2d9e4066784b0ad55b1f72d4b2e98c79.jpg',
+    alt: 'Pendientes de resina con forma orgánica en tonos rosa y blanco'
   }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/04960d364e623c85b2b5c521b255eb91.jpg',
-    alt: 'Pendientes de resina epoxi con forma orgánica irregular en color rosa magenta con textura craquelada'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/4237ffaf29bbea04cea2fc53c12487f8.jpg',
-    alt: 'Pendientes de resina con forma de abanico en tonos azul y blanco'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/2e3f998bdd234fe9c97ef4b6c1b204d7.jpg',
-    alt: 'Pendientes de resina con forma de flor en tonos rosa pastel'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/d5c6c428806a5a6a7039b9404c6c26f5.jpg',
-    alt: 'Pendientes de resina con forma orgánica en tonos verde menta y blanco'
+    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/2a9ba28badc6cb70c850d6b3d8b881fb.jpg',
+    alt: 'Pendientes de resina con forma de abanico en tonos rosa y turquesa'
   }];
 
   // Pack Sorpresa example images
@@ -197,8 +182,8 @@ const HomePage = () => {
     url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/2118dcd4adebc9b4870b009a75a3682b.jpg',
     alt: 'Dos pendientes de resina con turquesa y madera, ejemplo de joyería artesanal'
   }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/c93f3cfe72bdccc8f349b15c8870ad26.jpg',
-    alt: 'Frasco de perfume de cristal con diseño clásico, ejemplo de miniperfume'
+    url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2408-Photoroom.JPG',
+    alt: 'Frasco de perfume, ejemplo de miniperfume de la caja'
   }];
   return <>
       <Helmet>
