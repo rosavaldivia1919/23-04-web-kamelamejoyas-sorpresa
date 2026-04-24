@@ -1,601 +1,295 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
-import { Sparkles, Gift, Heart, Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Sparkles, Mail, MessageCircle, Star, Info, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
 import Header from '@/components/Header.jsx';
 import Footer from '@/components/Footer.jsx';
-import EarringsCarousel from '@/components/EarringsCarousel.jsx';
+
 const HomePage = () => {
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
     telefono: '',
-    forma: '',
-    colores: '',
-    perfume: ''
+    tipoEvento: 'Boda',
+    cantidad: '',
+    estiloPerfume: '',
+    mensaje: ''
   });
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [currentPerfumeIndex, setCurrentPerfumeIndex] = useState(0);
-  const handleInputChange = e => {
-    const {
-      name,
-      value
-    } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-  const handleSubmit = async e => {
-    e.preventDefault();
 
-    // Validaciones
+  const handleInputChange = e => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const validateForm = () => {
     if (!formData.nombre.trim()) {
-      toast.error('¡Ups! Te has olvidado de decirnos tu nombre 💖');
-      return;
+      toast.error('¡Falta tu nombre! 💖');
+      return false;
     }
     if (!formData.email.trim()) {
-      toast.error('Falta tu correo para que podamos contactarte ✨');
-      return;
+      toast.error('Falta tu correo para enviarte el presupuesto ✨');
+      return false;
     }
-    if (!formData.telefono.trim()) {
-      toast.error('Necesitamos tu teléfono para el WhatsApp y el envío 📦');
-      return;
+    if (!formData.cantidad.trim()) {
+      toast.error('Dinos una cantidad aproximada para calcularlo mejor 📦');
+      return false;
     }
-    if (!formData.forma) {
-      toast.error('¡No nos has dicho tu forma de joyita favorita! 🙈');
-      return;
-    }
-    if (!formData.colores.trim()) {
-      toast.error('Dinos qué colores te gustan para hacer tu caja perfecta 🎨');
-      return;
-    }
-    if (!formData.perfume) {
-      toast.error('¡Falta elegir el estilo de tu perfume! 🌸');
-      return;
-    }
+    return true;
+  };
+
+  const procesarMensaje = () => {
+    return `¡Hola! Me gustaría pedir un presupuesto de Miniperfumes para mi evento 🥂\n\n` + 
+           `Nombre: ${formData.nombre}\n` + 
+           `Email: ${formData.email}\n` + 
+           `Teléfono: ${formData.telefono}\n` + 
+           `Evento: ${formData.tipoEvento}\n` + 
+           `Cantidad estimada: ${formData.cantidad} unidades\n` + 
+           `Estilos de interés: ${formData.estiloPerfume}\n\n` + 
+           `Mensaje adicional: ${formData.mensaje}\n`;
+  };
+
+  const handleWhatsApp = e => {
+    e.preventDefault();
+    if (!validateForm()) return;
+    
     setIsSubmitting(true);
-    try {
-      // Guardado silencioso de seguridad
-      localStorage.setItem('mysteryBoxOrder', JSON.stringify({
-        ...formData,
-        timestamp: new Date().toISOString()
-      }));
-
-      // 1. Enviar el formulario por correo directo a tu Gmail (kamelamejoyas)
-      fetch('https://formsubmit.co/ajax/kamelamejoyas@gmail.com', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          _subject: '🎁 ¡Nuevo Pedido de Mystery Box Personalizada!',
-          Nombre: formData.nombre,
-          Email: formData.email,
-          Teléfono: formData.telefono,
-          Forma_Joya: formData.forma,
-          Colores: formData.colores,
-          Estilo_Perfume: formData.perfume
-        })
-      }).catch(err => console.log('Aviso de envio de email:', err));
-
-      // 2. Preparar el mensaje literal que irá a tu WhatsApp
-      const message = encodeURIComponent(`¡Hola! Quiero crear mi Pack Sorpresa Personalizado 🎁\n\n` + `Nombre: ${formData.nombre}\n` + `Email: ${formData.email}\n` + `Teléfono: ${formData.telefono}\n` + `Formas favoritas: ${formData.forma}\n` + `Colores favoritos: ${formData.colores}\n` + `Estilo de perfume: ${formData.perfume}\n\n` + `Precio: 22,99€`);
-      toast.success('¡Caja en preparación! Abriendo WhatsApp... ✨');
-
-      // 3. Abrir WhatsApp esquivando los bloqueadores
-      setTimeout(() => {
-        window.location.href = `https://wa.me/34659330593?text=${message}`;
-
-        // Limpiar formulario para el siguiente cliente
-        setFormData({
-          nombre: '',
-          email: '',
-          telefono: '',
-          forma: '',
-          colores: '',
-          perfume: ''
-        });
-        setIsSubmitting(false);
-      }, 500);
-    } catch (error) {
-      console.error('Fallo de conexión:', error);
-      // Este es el aviso si, por ejemplo, el cliente pierde el internet al pulsar:
-      toast.error('¡Uy! Ha habido un problema de conexión. ¿Puedes volver a pulsar? 🥺');
+    const mensajeTexto = encodeURIComponent(procesarMensaje());
+    toast.success('¡Redirigiendo a WhatsApp...!');
+    
+    setTimeout(() => {
+      window.location.href = `https://wa.me/34659330593?text=${mensajeTexto}`;
       setIsSubmitting(false);
-    }
+    }, 500);
   };
 
-  // Carousel navigation functions
-  const nextPerfume = () => {
-    setCurrentPerfumeIndex(prev => (prev + 1) % featuredPerfumes.length);
-  };
-  const prevPerfume = () => {
-    setCurrentPerfumeIndex(prev => (prev - 1 + featuredPerfumes.length) % featuredPerfumes.length);
+  const handleEmail = e => {
+    e.preventDefault();
+    if (!validateForm()) return;
+    
+    const mensajeTexto = encodeURIComponent(procesarMensaje());
+    window.location.href = `mailto:kamelamejoyas@gmail.com?subject=Presupuesto Miniperfumes - ${formData.nombre}&body=${mensajeTexto}`;
+    toast.success('¡Abriendo tu aplicación de correo electrónico!');
   };
 
-  // Featured mini-perfumes section - 27 products from local folder
-  const featuredPerfumes = [
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2184-Photoroom.JPG', alt: 'Mini-perfume 1' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2194-Photoroom.JPG', alt: 'Mini-perfume 2' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2208-Photoroom.JPG', alt: 'Mini-perfume 3' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2227-Photoroom.JPG', alt: 'Mini-perfume 4' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2236-Photoroom.JPG', alt: 'Mini-perfume 5' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2247-Photoroom.JPG', alt: 'Mini-perfume 6' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2251-Photoroom.JPG', alt: 'Mini-perfume 7' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2267-Photoroom.JPG', alt: 'Mini-perfume 8' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2278-Photoroom.JPG', alt: 'Mini-perfume 9' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2287-Photoroom.JPG', alt: 'Mini-perfume 10' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2300-Photoroom.JPG', alt: 'Mini-perfume 11' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2339-Photoroom.JPG', alt: 'Mini-perfume 12' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2351-Photoroom.JPG', alt: 'Mini-perfume 13' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2374-Photoroom.JPG', alt: 'Mini-perfume 14' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2408-Photoroom.JPG', alt: 'Mini-perfume 15' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2410-Photoroom.JPG', alt: 'Mini-perfume 16' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2413-Photoroom.JPG', alt: 'Mini-perfume 17' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2414-Photoroom.JPG', alt: 'Mini-perfume 18' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2420-Photoroom.JPG', alt: 'Mini-perfume 19' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2431-Photoroom.JPG', alt: 'Mini-perfume 20' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2441-Photoroom.JPG', alt: 'Mini-perfume 21' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2448-Photoroom.JPG', alt: 'Mini-perfume 22' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2455-Photoroom.JPG', alt: 'Mini-perfume 23' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2467-Photoroom.JPG', alt: 'Mini-perfume 24' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/Photoroom_20260421_181038.JPEG', alt: 'Mini-perfume 25' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/Photoroom_20260421_183900.JPG', alt: 'Mini-perfume 26' },
-    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/Photoroom_20260421_185155.jpeg', alt: 'Mini-perfume 27' }
+  // Catálogo de Miniperfumes (Sección Cuadrícula/Grid)
+  const miniperfumes = [
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2184-Photoroom.JPG', alt: 'Mini-perfume Boda 1' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2194-Photoroom.JPG', alt: 'Mini-perfume Boda 2' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2208-Photoroom.JPG', alt: 'Mini-perfume Boda 3' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2227-Photoroom.JPG', alt: 'Mini-perfume Boda 4' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2236-Photoroom.JPG', alt: 'Mini-perfume Boda 5' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2247-Photoroom.JPG', alt: 'Mini-perfume Boda 6' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2251-Photoroom.JPG', alt: 'Mini-perfume Boda 7' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2267-Photoroom.JPG', alt: 'Mini-perfume Boda 8' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2278-Photoroom.JPG', alt: 'Mini-perfume Boda 9' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2287-Photoroom.JPG', alt: 'Mini-perfume Boda 10' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2300-Photoroom.JPG', alt: 'Mini-perfume Boda 11' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2339-Photoroom.JPG', alt: 'Mini-perfume Boda 12' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2351-Photoroom.JPG', alt: 'Mini-perfume Boda 13' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2374-Photoroom.JPG', alt: 'Mini-perfume Boda 14' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2408-Photoroom.JPG', alt: 'Mini-perfume Boda 15' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2410-Photoroom.JPG', alt: 'Mini-perfume Boda 16' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2413-Photoroom.JPG', alt: 'Mini-perfume Boda 17' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2414-Photoroom.JPG', alt: 'Mini-perfume Boda 18' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2420-Photoroom.JPG', alt: 'Mini-perfume Boda 19' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2431-Photoroom.JPG', alt: 'Mini-perfume Boda 20' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2441-Photoroom.JPG', alt: 'Mini-perfume Boda 21' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2448-Photoroom.JPG', alt: 'Mini-perfume Boda 22' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2455-Photoroom.JPG', alt: 'Mini-perfume Boda 23' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2467-Photoroom.JPG', alt: 'Mini-perfume Boda 24' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/Photoroom_20260421_181038.JPEG', alt: 'Mini-perfume Boda 25' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/Photoroom_20260421_183900.JPG', alt: 'Mini-perfume Boda 26' },
+    { url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/Photoroom_20260421_185155.jpeg', alt: 'Mini-perfume Boda 27' }
   ];
 
-  // Jewelry catalog - Updated per user request
-  const catalogJewelry = [{
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/71444b4748a2b466be1fda2e4b5ce093.jpg',
-    alt: 'Pendientes de resina epoxi con forma de mariposa translúcida'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/101bb48d2f36fb70673555e30292b1dd.jpg',
-    alt: 'Pendientes de resina epoxi turquesa con destellos brillantes'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/bcc80257375f716f9bf16eae864ef89e.jpg',
-    alt: 'Pendientes de resina epoxi naranja ondulados'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/9e51da21adbe3cecd82a79f06bac9bf5.png',
-    alt: 'Pendientes de resina rosa con turquesa y madera, ejemplo de joyería artesanal'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/0365ec88248e95be07fb795ed02d94c2.png',
-    alt: 'Pendientes de resina ovalados en tonos beige y madera'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/75e337e979d6c61b5b5007605ddd8361.jpg',
-    alt: 'Pendientes de resina epoxi con forma de mariposa translúcida en tonos amarillo y azul claro'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/d2f319828782b97a3b82b3bedaee31a1.jpg',
-    alt: 'Pendientes de resina con forma de gota en tonos dorado y multicolor'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/2d9e4066784b0ad55b1f72d4b2e98c79.jpg',
-    alt: 'Pendientes de resina con forma orgánica en tonos rosa y blanco'
-  }, {
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/2a9ba28badc6cb70c850d6b3d8b881fb.jpg',
-    alt: 'Pendientes de resina con forma de abanico en tonos rosa y turquesa'
-  }];
-
-  // Pack Sorpresa example images
-  const packExamples = [{
-    url: 'https://horizons-cdn.hostinger.com/941371a8-fc9d-4f9b-89f0-df53540c25da/2118dcd4adebc9b4870b009a75a3682b.jpg',
-    alt: 'Dos pendientes de resina con turquesa y madera, ejemplo de joyería artesanal'
-  }, {
-    url: 'https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/IMG_2408-Photoroom.JPG',
-    alt: 'Frasco de perfume, ejemplo de miniperfume de la caja'
-  }];
   return <>
       <Helmet>
-        <title>kamelamepacksorpresa - Mystery Box Personalizada</title>
-        <meta name="description" content="Descubre tu Mystery Box personalizada con mini-perfumes, pendientes y regalos sorpresa. ¡Regálate o sorprende a alguien especial!" />
+        <title>Miniperfumes para Bodas y Eventos | Detalles Especiales</title>
+        <meta name="description" content="Catálogo de miniperfumes personalizables para bodas, bautizos y eventos. Descubre el detalle inolvidable perfecto para regalar a tus invitados." />
       </Helmet>
 
       <div className="min-h-screen bg-background">
         <Header />
 
-        {/* Hero Section */}
-        <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary/30 via-background to-secondary/20">
-          {/* Decorative elements */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-20 left-10 w-32 h-32 bg-accent rounded-full blur-3xl" data-twinkle></div>
-            <div className="absolute bottom-20 right-10 w-40 h-40 bg-primary rounded-full blur-3xl" data-sparkle></div>
-            <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-secondary rounded-full blur-2xl" data-twinkle></div>
+        {/* Hero Section con Imagen IA de Boda de fondo */}
+        <section className="relative min-h-[90dvh] flex items-center justify-center overflow-hidden">
+          {/* Fondo estético (AI Generated Image) */}
+          <div className="absolute inset-0">
+             <div className="absolute inset-0 bg-black/40 z-10"></div> {/* Oscurecedor para destacar texto */}
+             <img src="https://raw.githubusercontent.com/rosavaldivia1919/23-04-web-kamelamejoyas-sorpresa/main/horizons-export-941371a8-fc9d-4f9b-89f0-df53540c25da/apps/web/public/miniperfumes/hero_wedding_ai.png" alt="Mesa de boda con miniperfumes" className="w-full h-full object-cover" />
           </div>
 
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-            <motion.div initial={{
-            opacity: 0,
-            y: 20
-          }} animate={{
-            opacity: 1,
-            y: 0
-          }} transition={{
-            duration: 0.6
-          }}>
-              <div className="inline-block mb-6">
-                <Sparkles className="w-12 h-12 md:w-16 md:h-16 text-accent mx-auto" data-sparkle />
+          <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+              
+              <div className="inline-block mb-4 px-4 py-1.5 bg-white/20 backdrop-blur-md border border-white/40 rounded-full text-white/90 text-sm font-medium tracking-wide">
+                ESPECIAL BODAS Y EVENTOS
               </div>
               
-              <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl font-bold text-foreground leading-tight mb-6 text-balance">
-                <span className="sparkle-text">Descubre tu Mystery Box</span>
-                <br />
-                <span className="bg-gradient-to-r from-accent via-primary to-secondary bg-clip-text text-transparent" data-shimmer>
-                  Personalizada
-                </span>
+              <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-tight mb-6 drop-shadow-xl">
+                El aroma de tu gran día
               </h1>
               
-              <p className="text-lg md:text-xl lg:text-2xl text-foreground/80 max-w-3xl mx-auto mb-12 leading-relaxed">
-                Regálate o sorprende a alguien especial con una caja de miniperfumes hecha a medida
+              <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-10 leading-relaxed drop-shadow-md">
+                Regala la elegancia y la esencia de los perfumes más exclusivos a tus invitados. <br/>
+                <span className="text-sm font-light mt-4 block">*Catálogo masculino disponible bajo petición.</span>
               </p>
 
-              <motion.a href="#personalizar" className="inline-flex items-center gap-2 px-8 py-4 bg-accent text-accent-foreground rounded-xl text-lg font-semibold hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 active:scale-[0.98]" whileHover={{
-              scale: 1.02
-            }} whileTap={{
-              scale: 0.98
-            }}>
-                <Gift className="w-5 h-5" />
-                Crear mi Caja ahora
-              </motion.a>
-            </motion.div>
-          </div>
-
-          {/* Scroll indicator */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
-            <motion.div animate={{
-            y: [0, 10, 0]
-          }} transition={{
-            duration: 2,
-            repeat: Infinity
-          }} className="w-6 h-10 border-2 border-foreground/20 rounded-full flex items-start justify-center p-2">
-              <div className="w-1 h-2 bg-foreground/20 rounded-full"></div>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Pack Sorpresa Section - Text + Image Grid */}
-        <section id="oferta" className="py-20 md:py-24 bg-background">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div initial={{
-            opacity: 0,
-            y: 20
-          }} whileInView={{
-            opacity: 1,
-            y: 0
-          }} transition={{
-            duration: 0.5
-          }} viewport={{
-            once: true
-          }} className="text-center mb-12">
-              <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground text-balance mb-12">
-                Un pack sorpresa que combina miniperfumes con joyería artesanal de resina
-              </h2>
-
-              {/* Example Images Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
-                {packExamples.map((example, index) => <motion.div key={index} initial={{
-                opacity: 0,
-                y: 20
-              }} whileInView={{
-                opacity: 1,
-                y: 0
-              }} transition={{
-                duration: 0.5,
-                delay: index * 0.1
-              }} viewport={{
-                once: true
-              }} className="relative aspect-square rounded-2xl overflow-hidden bg-card shadow-lg">
-                    <img src={example.url} alt={example.alt} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
-                  </motion.div>)}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <motion.a href="#catalogo" className="w-full sm:w-auto px-8 py-4 bg-white text-foreground rounded-xl text-lg font-bold shadow-2xl hover:-translate-y-1 transition-all duration-200" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  Ver Catálogo
+                </motion.a>
+                <motion.a href="#contacto" className="w-full sm:w-auto px-8 py-4 bg-accent text-accent-foreground border border-white/20 rounded-xl text-lg font-bold shadow-xl hover:-translate-y-1 transition-all duration-200" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  Solicitar Presupuesto
+                </motion.a>
               </div>
             </motion.div>
           </div>
         </section>
 
-        {/* Main Offer Section */}
-        <section className="py-20 md:py-24 bg-background">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div initial={{
-            opacity: 0,
-            y: 20
-          }} whileInView={{
-            opacity: 1,
-            y: 0
-          }} transition={{
-            duration: 0.5
-          }} viewport={{
-            once: true
-          }} className="text-center mb-16">
-              <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 text-balance">
-                Pack Sorpresa Personalizado
-              </h2>
-              <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
-                Cada caja es una obra artesanal creada con tus gustos en mente
-              </p>
-            </motion.div>
-
-            <motion.div initial={{
-            opacity: 0,
-            y: 20
-          }} whileInView={{
-            opacity: 1,
-            y: 0
-          }} transition={{
-            duration: 0.5,
-            delay: 0.2
-          }} viewport={{
-            once: true
-          }} className="max-w-2xl mx-auto">
-              <div className="bg-card rounded-2xl shadow-lg p-8 md:p-12 border border-border">
-                <div className="text-center mb-8">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-accent/20 rounded-full mb-4">
-                    <Heart className="w-8 h-8 text-accent" />
-                  </div>
-                  <div className="text-5xl md:text-6xl font-serif font-bold text-foreground mb-2">
-                    22,99€
-                  </div>
-                  <p className="text-sm text-muted-foreground">Envío incluido</p>
-                </div>
-
-                <div className="space-y-4 mb-8">
-                  <div className="flex items-start gap-3">
-                    <Star className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                    <span className="text-foreground/90 leading-relaxed">
-                      <span className="font-semibold">2 Mini-perfumes</span> seleccionados según tus preferencias
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Star className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                    <span className="text-foreground/90 leading-relaxed">
-                      <span className="font-semibold">2 Pendientes</span> de resina o piedrecitas en formas que te encantan
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Star className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                    <span className="text-foreground/90 leading-relaxed">
-                      <span className="font-semibold">1 Regalo sorpresa</span> especial para ti
-                    </span>
-                  </div>
-                </div>
-
-                <a href="#personalizar" className="block w-full px-8 py-4 bg-accent text-accent-foreground rounded-xl text-center font-semibold hover:shadow-lg transition-all duration-200 active:scale-[0.98]">
-                  Personalizar mi Pack
-                </a>
-              </div>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Featured Mini-perfumes Carousel Section - 29 products ORGANIZED BY COLOR - COMPACT SIZE */}
-        <section id="mini-perfumes" className="py-20 md:py-24 bg-primary/10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div initial={{
-            opacity: 0,
-            y: 20
-          }} whileInView={{
-            opacity: 1,
-            y: 0
-          }} transition={{
-            duration: 0.5
-          }} viewport={{
-            once: true
-          }} className="text-center mb-12">
-              <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-6 text-balance">
-                Mini perfumes disponibles en la caja misteriosa
-              </h2>
-              <p className="text-lg text-foreground/80 max-w-3xl mx-auto leading-relaxed">
-                Descubre nuestra selección de miniperfumes
-              </p>
-            </motion.div>
-
-            {/* Compact Carousel Container - 50% size */}
-            <div className="flex items-center justify-center">
-              <div className="relative w-full max-w-md md:max-w-lg">
-                {/* Main Image Display - Compact */}
-                <div className="relative aspect-square rounded-2xl overflow-hidden bg-card shadow-lg">
-                  <img key={currentPerfumeIndex} src={featuredPerfumes[currentPerfumeIndex].url} alt={featuredPerfumes[currentPerfumeIndex].alt} className="w-full h-full object-cover transition-opacity duration-500" style={{
-                  animation: 'fadeIn 0.5s ease-in-out'
-                }} />
-                </div>
-
-                {/* Navigation Arrows - Smaller */}
-                <button onClick={prevPerfume} className="absolute left-1 md:left-2 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-background/90 hover:bg-background rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-110 active:scale-95 z-10" aria-label="Anterior mini-perfume">
-                  <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 text-foreground" />
-                </button>
-
-                <button onClick={nextPerfume} className="absolute right-1 md:right-2 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-background/90 hover:bg-background rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-110 active:scale-95 z-10" aria-label="Siguiente mini-perfume">
-                  <ChevronRight className="w-5 h-5 md:w-6 md:h-6 text-foreground" />
-                </button>
-
-                {/* Position Indicator - Compact */}
-                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-background/90 px-3 py-1.5 rounded-full shadow-lg z-10">
-                  <span className="text-xs md:text-sm font-semibold text-foreground">
-                    {currentPerfumeIndex + 1} de {featuredPerfumes.length}
-                  </span>
-                </div>
+        {/* Info & Anticipación Section */}
+        <section className="py-12 bg-primary/10 border-b border-background">
+          <div className="max-w-5xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-8 py-4">
+            <div className="flex items-start gap-4 flex-1">
+              <Calendar className="w-10 h-10 text-accent flex-shrink-0" />
+              <div>
+                <h3 className="font-serif font-bold text-xl text-foreground mb-1">Pedidos con antelación</h3>
+                <p className="text-foreground/70">Aconsejamos realizar tu solicitud con meses de previsión para organizar inventarios elevados de manera perfecta.</p>
               </div>
             </div>
-
-            {/* Keyboard Navigation Hint */}
-            <p className="text-center text-sm text-muted-foreground mt-6">
-              Usa las flechas para navegar entre los mini-perfumes
-            </p>
+            
+            <div className="hidden md:block w-px h-16 bg-border"></div>
+            
+            <div className="flex items-start gap-4 flex-1">
+              <Sparkles className="w-10 h-10 text-accent flex-shrink-0" />
+              <div>
+                <h3 className="font-serif font-bold text-xl text-foreground mb-1">Cientos de Esencias</h3>
+                <p className="text-foreground/70">Adaptamos las fragancias a tus gustos. Solicítanos información directa y te mandaremos el stock completo.</p>
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* Jewelry Carousel Section */}
-        <section className="py-20 md:py-24 bg-background">
+        {/* Catálogo Grid Section */}
+        <section id="catalogo" className="py-20 md:py-24 bg-background">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div initial={{
-            opacity: 0,
-            y: 20
-          }} whileInView={{
-            opacity: 1,
-            y: 0
-          }} transition={{
-            duration: 0.5
-          }} viewport={{
-            once: true
-          }} className="text-center mb-12">
-              <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-6 text-balance">
-                Joyas que encontrarás en la caja misteriosa
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} viewport={{ once: true }} className="text-center mb-16">
+              <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-6">
+                Catálogo Femenino Resaltado
               </h2>
-              <p className="text-lg text-foreground/80 max-w-3xl mx-auto leading-relaxed">
-                Descubre pendientes de resina hechos por mi y pendientes de piedras como cuarzo, ojo de tigre y más.
+              <p className="text-lg text-foreground/80 max-w-2xl mx-auto">
+                Una vista a algunos de nuestros envases lujosos para detalles de evento. Contacta con nosotros para descubrir el catálogo de hombre disponible en varios formatos.
               </p>
             </motion.div>
 
-            <motion.div initial={{
-            opacity: 0,
-            y: 20
-          }} whileInView={{
-            opacity: 1,
-            y: 0
-          }} transition={{
-            duration: 0.5,
-            delay: 0.2
-          }} viewport={{
-            once: true
-          }}>
-              <EarringsCarousel earrings={catalogJewelry} />
-
-              {/* Keyboard Navigation Hint */}
-              <p className="text-center text-sm text-muted-foreground mt-6">
-                Usa las flechas para navegar entre las joyas
-              </p>
-            </motion.div>
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8">
+              {miniperfumes.map((perfume, index) => (
+                <motion.div key={index} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.4, delay: (index % 8) * 0.05 }} viewport={{ once: true }} className="group relative aspect-[3/4] rounded-2xl overflow-hidden bg-card shadow-md border border-border/50 hover:shadow-xl transition-all duration-300">
+                  <img src={perfume.url} alt={perfume.alt} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-6">
+                    <span className="text-white font-medium tracking-wider text-sm bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm">Oler más</span>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </section>
 
-        {/* Personalization Form Section */}
-        <section id="personalizar" className="py-20 md:py-24 bg-background">
+        {/* Formulario de Presupuesto Section */}
+        <section id="contacto" className="py-20 md:py-24 bg-primary/10">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div initial={{
-            opacity: 0,
-            y: 20
-          }} whileInView={{
-            opacity: 1,
-            y: 0
-          }} transition={{
-            duration: 0.5
-          }} viewport={{
-            once: true
-          }} className="text-center mb-12">
-              <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 text-balance">
-                Personaliza tu Mystery Box
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} viewport={{ once: true }} className="text-center mb-12">
+              <h2 className="font-serif text-3xl md:text-5xl font-bold text-foreground mb-4">
+                Solicita tu Presupuesto a Medida
               </h2>
               <p className="text-lg text-foreground/70">
-                Cuéntanos tus preferencias y crearemos algo especial para ti
+                Contactamos a la mayor brevedad. Indícanos tu evento y necesidades.
               </p>
             </motion.div>
 
-            <motion.div initial={{
-            opacity: 0,
-            y: 20
-          }} whileInView={{
-            opacity: 1,
-            y: 0
-          }} transition={{
-            duration: 0.5,
-            delay: 0.2
-          }} viewport={{
-            once: true
-          }}>
-              <form onSubmit={handleSubmit} className="bg-card rounded-2xl shadow-lg p-8 md:p-12 border border-border space-y-8">
-                {/* Nombre y Apellidos */}
-                <div>
-                  <label htmlFor="nombre" className="block text-sm font-semibold text-foreground mb-2">
-                    Nombre y Apellidos
-                  </label>
-                  <input type="text" id="nombre" name="nombre" value={formData.nombre} onChange={handleInputChange} className="w-full px-4 py-3 bg-background border border-input rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200" placeholder="Tu nombre completo" required />
-                </div>
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} viewport={{ once: true }}>
+              <div className="bg-card rounded-2xl shadow-xl p-8 md:p-12 border border-border space-y-8">
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {/* Nombre */}
+                  <div className="space-y-2">
+                    <label htmlFor="nombre" className="block text-sm font-bold text-foreground">Nombre / Empresa</label>
+                    <input type="text" id="nombre" name="nombre" value={formData.nombre} onChange={handleInputChange} className="w-full px-4 py-3 bg-secondary/10 border border-input rounded-xl focus:ring-2 focus:ring-accent transition-all" placeholder="Ej. Ana García" required />
+                  </div>
 
-                {/* Correo Electrónico */}
-                <div>
-                  <label htmlFor="email" className="block text-sm font-semibold text-foreground mb-2">
-                    Correo Electrónico
-                  </label>
-                  <input type="email" id="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full px-4 py-3 bg-background border border-input rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200" placeholder="tu@correo.com" required />
-                </div>
+                  {/* Teléfono */}
+                  <div className="space-y-2">
+                    <label htmlFor="telefono" className="block text-sm font-bold text-foreground">Teléfono móvil</label>
+                    <input type="tel" id="telefono" name="telefono" value={formData.telefono} onChange={handleInputChange} className="w-full px-4 py-3 bg-secondary/10 border border-input rounded-xl focus:ring-2 focus:ring-accent transition-all" placeholder="Tu número" required />
+                  </div>
+                  
+                  {/* Email */}
+                  <div className="space-y-2">
+                    <label htmlFor="email" className="block text-sm font-bold text-foreground">Correo Electrónico</label>
+                    <input type="email" id="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full px-4 py-3 bg-secondary/10 border border-input rounded-xl focus:ring-2 focus:ring-accent transition-all" placeholder="tu@correo.com" required />
+                  </div>
 
-                {/* Teléfono */}
-                <div>
-                  <label htmlFor="telefono" className="block text-sm font-semibold text-foreground mb-2">
-                    Teléfono
-                  </label>
-                  <input type="tel" id="telefono" name="telefono" value={formData.telefono} onChange={handleInputChange} className="w-full px-4 py-3 bg-background border border-input rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200" placeholder="Tu número de teléfono" required />
-                </div>
+                  {/* Evento */}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-bold text-foreground">Tipo de Evento</label>
+                    <select name="tipoEvento" value={formData.tipoEvento} onChange={handleInputChange} className="w-full px-4 py-3 bg-secondary/10 border border-input rounded-xl focus:ring-2 focus:ring-accent transition-all">
+                      <option>Boda</option>
+                      <option>Bautizo / Comunión</option>
+                      <option>Cumpleaños</option>
+                      <option>Evento de Empresa / Corporativo</option>
+                      <option>Despedida</option>
+                      <option>Otro</option>
+                    </select>
+                  </div>
 
-                {/* Formas favoritas */}
-                <div>
-                  <label className="block text-sm font-semibold text-foreground mb-3">
-                    Formas favoritas para joyitas
-                  </label>
-                  <div className="space-y-3">
-                    {['Redonda', 'Cuadrada', 'Ovalada', 'Triangular', '¡Sorpréndeme!'].map(forma => <label key={forma} className="flex items-center gap-3 cursor-pointer group">
-                        <input type="radio" name="forma" value={forma} checked={formData.forma === forma} onChange={handleInputChange} className="w-5 h-5 text-accent border-input focus:ring-2 focus:ring-ring transition-all duration-200" required />
-                        <span className="text-foreground/90 group-hover:text-foreground transition-colors duration-200">
-                          {forma}
-                        </span>
-                      </label>)}
+                  {/* Cantidad */}
+                  <div className="space-y-2">
+                    <label htmlFor="cantidad" className="block text-sm font-bold text-foreground">Cantidad aprox. (Invitados)</label>
+                    <input type="number" id="cantidad" name="cantidad" value={formData.cantidad} onChange={handleInputChange} className="w-full px-4 py-3 bg-secondary/10 border border-input rounded-xl focus:ring-2 focus:ring-accent transition-all" placeholder="Ej. 120" required />
+                  </div>
+                  
+                  {/* Estilos Perfume */}
+                   <div className="space-y-2">
+                    <label htmlFor="estiloPerfume" className="block text-sm font-bold text-foreground">¿Buscas algún estilo?</label>
+                    <input type="text" id="estiloPerfume" name="estiloPerfume" value={formData.estiloPerfume} onChange={handleInputChange} className="w-full px-4 py-3 bg-secondary/10 border border-input rounded-xl focus:ring-2 focus:ring-accent transition-all" placeholder="Ej: Dulces, frescos, para hombre..." />
                   </div>
                 </div>
 
-                {/* Colores favoritos */}
-                <div>
-                  <label htmlFor="colores" className="block text-sm font-semibold text-foreground mb-2">
-                    Colores favoritos
-                  </label>
-                  <input type="text" id="colores" name="colores" value={formData.colores} onChange={handleInputChange} className="w-full px-4 py-3 bg-background border border-input rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200" placeholder="Ej: Rosa, azul pastel, dorado..." required />
+                {/* Mensaje Adicional */}
+                <div className="space-y-2">
+                    <label htmlFor="mensaje" className="block text-sm font-bold text-foreground">Cuéntanos un poco más sobre el evento...</label>
+                    <textarea id="mensaje" name="mensaje" value={formData.mensaje} onChange={handleInputChange} className="w-full px-4 py-3 bg-secondary/10 border border-input rounded-xl focus:ring-2 focus:ring-accent transition-all min-h-[100px]" placeholder="Colores temáticos de la boda, fechas importantes..." />
                 </div>
 
-                {/* Estilo de perfume */}
-                <div>
-                  <label className="block text-sm font-semibold text-foreground mb-3">
-                    Estilo de perfume
-                  </label>
-                  <div className="space-y-3">
-                    {['Dulces', 'Amaderados', 'Frescos'].map(perfume => <label key={perfume} className="flex items-center gap-3 cursor-pointer group">
-                        <input type="radio" name="perfume" value={perfume} checked={formData.perfume === perfume} onChange={handleInputChange} className="w-5 h-5 text-accent border-input focus:ring-2 focus:ring-ring transition-all duration-200" required />
-                        <span className="text-foreground/90 group-hover:text-foreground transition-colors duration-200">
-                          {perfume}
-                        </span>
-                      </label>)}
-                  </div>
+                <div className="pt-6 border-t border-border mt-8 flex flex-col md:flex-row gap-4 justify-center">
+                   {/* Enviar WhatsApp */}
+                  <button onClick={handleWhatsApp} disabled={isSubmitting} className="flex-1 px-8 py-4 bg-[#25D366] hover:bg-[#128C7E] text-white rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95 flex items-center justify-center gap-3">
+                    <MessageCircle className="w-6 h-6" />
+                    Consultar por WhatsApp
+                  </button>
+
+                  {/* Enviar Email */}
+                  <button onClick={handleEmail} disabled={isSubmitting} className="flex-1 px-8 py-4 bg-accent/20 hover:bg-accent/40 text-accent-foreground border border-accent rounded-xl text-lg font-semibold shadow hover:shadow-xl transition-all duration-300 active:scale-95 flex items-center justify-center gap-3">
+                    <Mail className="w-6 h-6" />
+                    Enviar Consulta por Email
+                  </button>
                 </div>
-
-                {/* Submit Button */}
-                <button type="submit" disabled={isSubmitting} className="w-full px-8 py-4 bg-accent text-accent-foreground rounded-xl text-lg font-semibold hover:shadow-lg transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none flex items-center justify-center gap-2">
-                  {isSubmitting ? <>
-                      <div className="w-5 h-5 border-2 border-accent-foreground/20 border-t-accent-foreground rounded-full animate-spin"></div>
-                      <span>Procesando...</span>
-                    </> : <>
-                      <Gift className="w-5 h-5" />
-                      <span>¡Crear mi Caja y Pedir por WhatsApp!</span>
-                    </>}
-                </button>
-
-                <p className="text-sm text-center text-muted-foreground">
-                  Al enviar, serás redirigido a WhatsApp con tus preferencias
+                
+                <p className="text-center text-xs text-muted-foreground pt-4">
+                  *Nos pondremos en contacto contigo lo más rápido posible. Preparar inventario de miniperfumes premium requiere semanas de gestión.
                 </p>
-              </form>
+
+              </div>
             </motion.div>
           </div>
         </section>
 
         <Footer />
       </div>
-
-      <style>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-      `}</style>
     </>;
 };
+
 export default HomePage;
